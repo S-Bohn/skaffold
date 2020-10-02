@@ -14,3 +14,10 @@ weight: 20
     Anchors can be defined by having top-level keys starting with a dot, e.g. <code>.common_stuff: &alias_name</code>.
     You can then reuse the value using <code>*alias_name</code>.
 </p>
+
+<h3>Jsonnet Support</h3>
+<p>
+    Skaffold supports the <a href="https://jsonnet.org/">Jsonnet</a> data templating language to write
+    the configuration. Requires to explicitly set the configuration file with jsonnet filename extension: e.g.:
+    <pre><code>skaffold -f skaffold.jsonnet build</code></pre>
+</p>

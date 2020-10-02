@@ -20,7 +20,9 @@ import (
 	"errors"
 	"io/ioutil"
 	"os"
+	"strings"
 
+	"github.com/google/go-jsonnet"
 	"github.com/sirupsen/logrus"
 )
 
@@ -32,6 +34,23 @@ func ReadConfiguration(filename string) ([]byte, error) {
 		return nil, errors.New("filename not specified")
 	case filename == "-":
 		return ioutil.ReadAll(os.Stdin)
+	case strings.HasSuffix(filename, ".jsonnet"):
+		var contents []byte
+		var err error
+		if IsURL(filename) {
+			contents, err = Download(filename)
+		} else {
+			contents, err = ioutil.ReadFile(filename)
+		}
+		if err != nil {
+			return nil, err
+		}
+		vm := jsonnet.MakeVM()
+		output, err := vm.EvaluateSnippet(filename, string(contents))
+		if err != nil {
+			return nil, err
+		}
+		return []byte(output), nil
 	case IsURL(filename):
 		return Download(filename)
 	default:

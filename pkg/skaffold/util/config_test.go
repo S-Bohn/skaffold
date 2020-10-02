@@ -66,3 +66,16 @@ func TestReadConfigurationRemote(t *testing.T) {
 
 	testutil.CheckErrorAndDeepEqual(t, false, err, []byte("remote file"), content)
 }
+
+func TestReadJsonnetConfiguration(t *testing.T) {
+	testutil.Run(t, "", func(t *testutil.T) {
+		t.NewTempDir().
+			Write("skaffold.jsonnet", `local func(var)='jsonnet %s' % var; func('file')`).
+			Chdir()
+
+		content, err := ReadConfiguration("skaffold.jsonnet")
+
+		t.CheckNoError(err)
+		t.CheckDeepEqual([]byte("\"jsonnet file\"\n"), content)
+	})
+}
